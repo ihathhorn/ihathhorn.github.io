@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get a Quote — Isaac Hathhorn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #1B3A5C;
+    --navy-lt: #2A5080;
+    --gold:    #B8923A;
+    --gold-lt: #D4AA55;
+    --cream:   #FAF8F4;
+    --white:   #FFFFFF;
+    --border:  #E4DDD3;
+    --text:    #2C2C2C;
+    --text-md: #5A5450;
+    --text-lt: #9A918A;
+    --green:   #2E7D55;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  nav {
+    background: var(--navy);
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .nav-logo span { color: var(--gold-lt); }
+  .nav-back {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold-lt); }
+  .hero-strip {
+    background: linear-gradient(135deg, var(--navy) 0%, #254d75 100%);
+    color: white;
+    text-align: center;
+    padding: 52px 24px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-strip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-lt);
+    margin-bottom: 12px;
+  }
+  .hero-strip h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .hero-strip h1 em { font-style: italic; color: var(--gold-lt); }
+  .hero-strip p {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .progress-wrap {
+    background: rgba(255,255,255,0.12);
+    border-radius: 100px;
+    height: 4px;
+    width: 260px;
+    margin: 28px auto 0;
+  }
+  .progress-bar {
+    background: var(--gold-lt);
+    height: 4px;
+    border-radius: 100px;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.45);
+    margin-top: 8px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px 80px;
+  }
+  .quiz-shell { width: 100%; max-width: 620px; }
+  .step { display: none; animation: stepIn 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+  .step.active { display: block; }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(28px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .step-card {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 44px 44px 40px;
+    box-shadow: 0 4px 24px rgba(27,58,92,0.08), 0 1px 4px rgba(27,58,92,0.04);
+    border: 1px solid var(--border);
+  }
+  .step-number {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .step-question {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .step-hint {
+    font-size: 0.85rem;
+    color: var(--text-lt);
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--cream);
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    font-weight: 500;
+    color: var(--text);
+    width: 100%;
+  }
+  .opt:hover { border-color: var(--navy-lt); background: #EEF4FA; transform: translateX(3px); }
+  .opt.selected { border-color: var(--navy); background: #EEF4FA; color: var(--navy); }
+  .opt-icon {
+    font-size: 1.3rem;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(27,58,92,0.07);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .opt.selected .opt-icon { background: var(--navy); }
+  .opt-check {
+    margin-left: auto;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-size: 0.72rem;
+    color: white;
+  }
+  .opt.selected .opt-check { background: var(--navy); border-color: var(--navy); }
+  .opt-text { flex: 1; }
+  .opt-label { display: block; font-weight: 500; }
+  .opt-sub { display: block; font-size: 0.78rem; color: var(--text-lt); font-weight: 400; margin-top: 1px; }
+  .step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+  }
+  .btn-back {
+    background: none; border: none;
+    color: var(--text-lt);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    padding: 10px 0;
+    transition: color 0.2s;
+  }
+  .btn-back:hover { color: var(--navy); }
+  .btn-back:disabled { opacity: 0; pointer-events: none; }
+  .btn-next {
+    background: var(--navy); color: white;
+    border: none; border-radius: 100px;
+    padding: 13px 30px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    opacity: 0.35; pointer-events: none;
+  }
+  .btn-next.ready { opacity: 1; pointer-events: all; }
+  .btn-next.ready:hover {
+    background: var(--navy-lt);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(27,58,92,0.22);
+  }
+  /* Result */
+  .result-card {
+    background: var(--white);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(27,58,92,0.1);
+    border: 1px solid var(--border);
+    animation: stepIn 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  .result-header {
+    background: linear-gradient(135deg, var(--navy), #254d75);
+    color: white;
+    padding: 38px 40px 32px;
+  }
+  .result-eyebrow {
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold-lt); margin-bottom: 10px;
+  }
+  .result-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem; font-weight: 600; margin-bottom: 6px;
+  }
+  .result-header p { font-size: 0.88rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
+  .summary-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .s-pill {
+    background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85);
+    border-radius: 100px; padding: 5px 14px;
+    font-size: 0.76rem; font-weight: 500;
+  }
+  .result-body { padding: 36px 40px; }
+  .price-range-block {
+    background: var(--cream); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px 30px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .price-icon {
+    font-size: 1.8rem; width: 58px; height: 58px;
+    border-radius: 14px; background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .price-label {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-lt); margin-bottom: 4px;
+  }
+  .price-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 600;
+    color: var(--navy); line-height: 1;
+  }
+  .price-note { font-size: 0.8rem; color: var(--text-lt); margin-top: 4px; }
+  .breakdown { list-style: none; margin-bottom: 28px; }
+  .breakdown li {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.88rem; gap: 16px;
+  }
+  .breakdown li:last-child { border-bottom: none; }
+  .bd-label { color: var(--text-md); flex: 1; }
+  .bd-price { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .included-title {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-lt); margin-bottom: 14px;
+  }
+  .included-list {
+    list-style: none;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 30px;
+  }
+  .included-list li {
+    font-size: 0.83rem; color: var(--text-md);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .included-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .assessment-banner {
+    background: linear-gradient(135deg, #EEF4FA, #E8F0F8);
+    border: 1px solid #C8D9EA; border-radius: 14px;
+    padding: 22px 24px; display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 24px;
+  }
+  .assessment-banner .b-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
+  .assessment-banner p { font-size: 0.87rem; color: var(--navy); line-height: 1.55; }
+  .cta-group { display: flex; flex-direction: column; gap: 12px; }
+  .cta-primary {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--navy); color: white; text-decoration: none;
+    border-radius: 100px; padding: 16px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem; font-weight: 600;
+    transition: all 0.2s; text-align: center;
+  }
+  .cta-primary:hover { background: var(--navy-lt); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(27,58,92,0.25); }
+  .cta-wa {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: #e8f5e9; color: #1B5E20; text-decoration: none;
+    border-radius: 100px; padding: 15px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem; font-weight: 600;
+    transition: all 0.2s; border: 1.5px solid #a5d6a7; text-align: center;
+  }
+  .cta-wa:hover { background: #d0efd1; transform: translateY(-1px); }
+  .cta-foot {
+    text-align: center; font-size: 0.82rem; color: var(--text-lt); padding: 6px;
+  }
+  .cta-foot a { color: var(--navy); font-weight: 500; text-decoration: none; }
+  .cta-foot a:hover { text-decoration: underline; }
+  footer {
+    text-align: center; padding: 28px 24px;
+    font-size: 0.78rem; color: var(--text-lt);
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--navy); text-decoration: none; font-weight: 500; }
+  @media (max-width: 640px) {
+    .step-card, .result-body { padding: 28px 22px; }
+    .result-header { padding: 28px 22px 24px; }
+    .included-list { grid-template-columns: 1fr; }
+    .price-range-block { flex-direction: column; align-items: flex-start; gap: 12px; }
+    nav { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Isaac <span>Hathhorn</span></a>
+  <a href="services.html" class="nav-back">← Back to Services</a>
+</nav>
+
+<div class="hero-strip">
+  <div class="hero-eyebrow">🍽️ Instant Estimate</div>
+  <h1>What would it cost<br>to <em>fix your system?</em></h1>
+  <p>Answer 6 quick questions and get a real price range — no meeting required.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">Question 1 of 6</p>
+</div>
+
+<main>
+<div class="quiz-shell">
+
+  <!-- Step 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-card">
+      <div class="step-number">Question 1 of 6</div>
+      <h2 class="step-question">How many locations does your restaurant operate?</h2>
+      <p class="step-hint">This affects the scope and amount of data that needs to be configured.</p>
+      <div class="options">
+        <button class="opt" data-val="1" onclick="pick(this,1)">
+          <span class="opt-icon">🏠</span>
+          <span class="opt-text"><span class="opt-label">Just 1 location</span><span class="opt-sub">Single-location independent restaurant</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="2-3" onclick="pick(this,1)">
+          <span class="opt-icon">🏘️</span>
+          <span class="opt-text"><span class="opt-label">2–3 locations</span><span class="opt-sub">Small multi-location operation</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="4+" onclick="pick(this,1)">
+          <span class="opt-icon">🏢</span>
+          <span class="opt-text"><span class="opt-label">4 or more locations</span><span class="opt-sub">Larger chain or franchise group</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" disabled>← Back</button>
+        <button class="btn-next" id="next-1" onclick="goNext(1)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step-2">
+    <div class="step-card">
+      <div class="step-number">Question 2 of 6</div>
+      <h2 class="step-question">Which platform are you working with?</h2>
+      <p class="step-hint">I specialize in MarketMan and xtraChef — both fully supported.</p>
+      <div class="options">
+        <button class="opt" data-val="marketman" onclick="pick(this,2)">
+          <span class="opt-icon">📊</span>
+          <span class="opt-text"><span class="opt-label">MarketMan</span><span class="opt-sub">Already have an account</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="xtrachef" onclick="pick(this,2)">
+          <span class="opt-icon">👨‍🍳</span>
+          <span class="opt-text"><span class="opt-label">xtraChef</span><span class="opt-sub">Already have an account</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="none" onclick="pick(this,2)">
+          <span class="opt-icon">🆕</span>
+          <span class="opt-text"><span class="opt-label">Don't have a platform yet</span><span class="opt-sub">Starting from scratch</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="notsure" onclick="pick(this,2)">
+          <span class="opt-icon">🤔</span>
+          <span class="opt-text"><span class="opt-label">Not sure / Something else</span><span class="opt-sub">We can figure it out together</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(2)">← Back</button>
+        <button class="btn-next" id="next-2" onclick="goNext(2)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step-3">
+    <div class="step-card">
+      <div class="step-number">Question 3 of 6</div>
+      <h2 class="step-question">What do you mainly need help with?</h2>
+      <p class="step-hint">Choose the one that best describes where you're at right now.</p>
+      <div class="options">
+        <button class="opt" data-val="recipes" onclick="pick(this,3)">
+          <span class="opt-icon">📋</span>
+          <span class="opt-text"><span class="opt-label">Recipe building & costing</span><span class="opt-sub">Build out my menu items, sub-recipes, and food costs</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="fullsetup" onclick="pick(this,3)">
+          <span class="opt-icon">🔧</span>
+          <span class="opt-text"><span class="opt-label">Full setup from scratch</span><span class="opt-sub">POS integration, catalog, recipes, reporting — the whole thing</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="cleanup" onclick="pick(this,3)">
+          <span class="opt-icon">🧹</span>
+          <span class="opt-text"><span class="opt-label">Cleanup & fix existing setup</span><span class="opt-sub">Something's broken or messy — I need it sorted out</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="ongoing" onclick="pick(this,3)">
+          <span class="opt-icon">🔄</span>
+          <span class="opt-text"><span class="opt-label">Ongoing monthly management</span><span class="opt-sub">I want someone to handle the system so I don't have to</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="training" onclick="pick(this,3)">
+          <span class="opt-icon">🎓</span>
+          <span class="opt-text"><span class="opt-label">Training for me / my team</span><span class="opt-sub">We need to learn how to use the platform confidently</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(3)">← Back</button>
+        <button class="btn-next" id="next-3" onclick="goNext(3)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step-4">
+    <div class="step-card">
+      <div class="step-number">Question 4 of 6</div>
+      <h2 class="step-question">Roughly how many recipes does your menu have?</h2>
+      <p class="step-hint">Count finished menu items plus any house-made sauces, dressings, or components.</p>
+      <div class="options">
+        <button class="opt" data-val="under50" onclick="pick(this,4)">
+          <span class="opt-icon">🥗</span>
+          <span class="opt-text"><span class="opt-label">Under 50 recipes</span><span class="opt-sub">Focused menu, small operation</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="50-100" onclick="pick(this,4)">
+          <span class="opt-icon">🍽️</span>
+          <span class="opt-text"><span class="opt-label">50 – 100 recipes</span><span class="opt-sub">Mid-size menu with modifiers and variations</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="100-200" onclick="pick(this,4)">
+          <span class="opt-icon">🍴</span>
+          <span class="opt-text"><span class="opt-label">100 – 200 recipes</span><span class="opt-sub">Larger menu or multiple concepts</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="200+" onclick="pick(this,4)">
+          <span class="opt-icon">📚</span>
+          <span class="opt-text"><span class="opt-label">200+ recipes</span><span class="opt-sub">Extensive menu, multi-location variations</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="notsure" onclick="pick(this,4)">
+          <span class="opt-icon">🤷</span>
+          <span class="opt-text"><span class="opt-label">Not sure</span><span class="opt-sub">I haven't counted them out</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(4)">← Back</button>
+        <button class="btn-next" id="next-4" onclick="goNext(4)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step" id="step-5">
+    <div class="step-card">
+      <div class="step-number">Question 5 of 6</div>
+      <h2 class="step-question">Is your ingredient & supplier catalog already set up?</h2>
+      <p class="step-hint">This is the ingredient list in your platform — with purchasing units, suppliers, and costs.</p>
+      <div class="options">
+        <button class="opt" data-val="yes" onclick="pick(this,5)">
+          <span class="opt-icon">✅</span>
+          <span class="opt-text"><span class="opt-label">Yes, fully set up</span><span class="opt-sub">All ingredients are in the system with costs</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="partial" onclick="pick(this,5)">
+          <span class="opt-icon">⚙️</span>
+          <span class="opt-text"><span class="opt-label">Partially set up</span><span class="opt-sub">Some ingredients are there but it's incomplete</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="no" onclick="pick(this,5)">
+          <span class="opt-icon">❌</span>
+          <span class="opt-text"><span class="opt-label">Not set up yet</span><span class="opt-sub">Starting from a blank slate</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(5)">← Back</button>
+        <button class="btn-next" id="next-5" onclick="goNext(5)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step" id="step-6">
+    <div class="step-card">
+      <div class="step-number">Question 6 of 6</div>
+      <h2 class="step-question">What's your timeline for getting started?</h2>
+      <p class="step-hint">No pressure either way — just helps me understand where you're at.</p>
+      <div class="options">
+        <button class="opt" data-val="asap" onclick="pick(this,6)">
+          <span class="opt-icon">🚀</span>
+          <span class="opt-text"><span class="opt-label">As soon as possible</span><span class="opt-sub">Ready to move forward now</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="month" onclick="pick(this,6)">
+          <span class="opt-icon">📅</span>
+          <span class="opt-text"><span class="opt-label">Within the next month</span><span class="opt-sub">Exploring options, getting aligned internally</span></span>
+          <span class="opt-check"></span>
+        </button>
+        <button class="opt" data-val="exploring" onclick="pick(this,6)">
+          <span class="opt-icon">🔍</span>
+          <span class="opt-text"><span class="opt-label">Just exploring for now</span><span class="opt-sub">No immediate plans — want to understand what's involved</span></span>
+          <span class="opt-check"></span>
+        </button>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(6)">← Back</button>
+        <button class="btn-next" id="next-6" onclick="showResult()">See My Estimate →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="step" id="step-result">
+    <div class="result-card" id="resultCard"></div>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  © 2026 Isaac Hathhorn · Restaurant Technology Consultant ·
+  <a href="services.html">Services</a> · <a href="index.html">Portfolio</a>
+</footer>
+
+<script>
+const ans = {};
+
+function pick(btn, step) {
+  btn.closest('.options').querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.opt-check').textContent = '';
+  });
+  btn.classList.add('selected');
+  btn.querySelector('.opt-check').textContent = '✓';
+  ans['q' + step] = btn.dataset.val;
+  const nb = document.getElementById('next-' + step);
+  if (nb) nb.classList.add('ready');
+}
+
+function goNext(step) {
+  if (!ans['q' + step]) return;
+  document.getElementById('step-' + step).classList.remove('active');
+  const n = step + 1;
+  document.getElementById('step-' + n).classList.add('active');
+  setProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack(step) {
+  document.getElementById('step-' + step).classList.remove('active');
+  document.getElementById('step-' + (step - 1)).classList.add('active');
+  setProgress(step - 1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setProgress(step) {
+  const pct = Math.min(((step - 1) / 6) * 100, 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent =
+    step <= 6 ? 'Question ' + step + ' of 6' : 'Your estimate is ready!';
+}
+
+function calc() {
+  const loc  = ans.q1, svc = ans.q3, recs = ans.q4, cat = ans.q5;
+  let low = 0, high = 0, type = '', breakdown = [], includes = [];
+
+  if (svc === 'recipes') {
+    const base = { under50:[350,500], '50-100':[550,800], '100-200':[900,1250], '200+':null, notsure:[550,800] };
+    const b = base[recs];
+    if (!b || recs === '200+') return { custom: true, r: 'With 200+ recipes, the scope can vary quite a bit depending on modifiers, sub-recipes, and location count. I\'ll put together an accurate proposal after a quick look.' };
+    [low, high] = b;
+    type = 'Recipe Build';
+    breakdown.push({ l: 'Recipe building & food cost setup', p: '$' + low + '–$' + high });
+    includes = ['All sub-recipes & components','Finished menu item builds','Ingredient & unit mapping','Food cost verification','Modifier & variant setup','Final review session'];
+    if (cat === 'no')           { low += 100; high += 150; breakdown.push({ l: 'Ingredient catalog setup (from scratch)', p: '+$100–$150' }); }
+    else if (cat === 'partial') { low += 50;  high += 80;  breakdown.push({ l: 'Catalog cleanup & completion', p: '+$50–$80' }); }
+    if (loc === '2-3')     { low = Math.round(low*1.45); high = Math.round(high*1.45); breakdown.push({ l: 'Multi-location scope (2–3 locations)', p: '+~45%' }); }
+    else if (loc === '4+') return { custom: true, r: 'Your operation size (4+ locations) means the scope needs a more detailed discussion to quote accurately.' };
+
+  } else if (svc === 'cleanup') {
+    type = 'Account Cleanup';
+    low = loc === '2-3' ? 500 : 350;
+    high = loc === '2-3' ? 800 : 550;
+    if (loc === '4+') return { custom: true, r: 'For 4+ locations, a cleanup project needs a scoping call first — the range varies quite a bit.' };
+    breakdown = [{ l: 'Account assessment & audit', p: 'Included (free)' }, { l: 'Cleanup, corrections & streamlining', p: '$' + low + '–$' + high }];
+    includes = ['Full account audit','Fix broken items & mappings','Streamline reporting','Remove duplicates & errors','Summary of all changes','Handoff walkthrough'];
+
+  } else if (svc === 'fullsetup') {
+    if (loc === '4+') return { custom: true, r: 'Full setup for 4+ locations is a larger project — I\'d want to scope it properly before giving a number.' };
+    type = 'Full Setup';
+    low = loc === '2-3' ? 950 : 700;
+    high = loc === '2-3' ? 1500 : 1100;
+    breakdown = [{ l: 'Full platform setup & configuration', p: '$' + low + '–$' + high }, { l: 'POS & QuickBooks integration', p: 'Included' }, { l: 'Recipe building', p: 'Included' }, { l: 'Team training session', p: 'Included' }];
+    includes = ['POS integration (Toast / Square)','Inventory catalog setup','Recipe & cost builds','Supplier & ordering config','QuickBooks Online sync','Staff training session'];
+
+  } else if (svc === 'ongoing') {
+    if (loc === '2-3' || loc === '4+') return { custom: true, r: 'Ongoing management for multi-location operations is priced by volume — a quick call helps scope it accurately.' };
+    type = 'Monthly Management';
+    low = 150; high = 400;
+    breakdown = [{ l: 'Starter plan (invoice processing + data entry)', p: '$150/mo' }, { l: 'Professional plan (full management)', p: '$400/mo' }];
+    includes = ['Invoice processing & data entry','Inventory count support','Reporting & insights review','Troubleshooting & fixes','No long-term commitment','Cancel anytime'];
+
+  } else if (svc === 'training') {
+    type = 'Training';
+    low = 100; high = 300;
+    breakdown = [{ l: 'Training sessions ($100/hr, min. 1 hr)', p: '$100–$300' }, { l: 'Session recap & notes', p: 'Included' }];
+    includes = ['Private or team sessions','Tailored to your platform & setup','Session recap document','Follow-up Q&A support','Recordings available on request'];
+  }
+
+  return { custom: false, type, low, high, breakdown, includes };
+}
+
+function buildFormURL(r, pills) {
+  const platMap = { marketman:'MarketMan', xtrachef:'xtraChef', none:'Not yet set up', notsure:'Other' };
+  const svcMap  = { recipes:'Recipe Build', fullsetup:'Account Setup & Implementation', cleanup:'Account Cleanup Package (from $350)', ongoing:'Professional Services ($400/month)', training:'Training & Consultation ($100/hr)' };
+  const locMap  = { '1':'1 location', '2-3':'2–3 locations', '4+':'4+ locations' };
+  const catMap  = { yes:'fully set up', partial:'partially set up', no:'not set up yet' };
+  const tlMap   = { asap:'as soon as possible', month:'within the next month', exploring:'just exploring for now' };
+
+  const summary = [
+    '--- From Quote Estimator ---',
+    'Locations: ' + (locMap[ans.q1] || ans.q1),
+    'Platform: ' + (platMap[ans.q2] || ans.q2),
+    'Service needed: ' + (svcMap[ans.q3] || ans.q3),
+    'Recipe count: ' + (ans.q4 || '—'),
+    'Catalog status: ' + (catMap[ans.q5] || ans.q5),
+    'Timeline: ' + (tlMap[ans.q6] || ans.q6),
+    'Ballpark estimate: $' + r.low + '–$' + r.high,
+    '---',
+    "What's your biggest challenge with your inventory system right now?"
+  ].join('\n');
+
+  const params = new URLSearchParams({
+    platform: platMap[ans.q2] || '',
+    service:  svcMap[ans.q3] || '',
+    message:  summary,
+    estimate: '$' + r.low + '–$' + r.high
+  });
+  return 'services.html?' + params.toString() + '#contact';
+}
+
+function buildCustomFormURL(pills) {
+  const platMap = { marketman:'MarketMan', xtrachef:'xtraChef', none:'Not yet set up', notsure:'Other' };
+  const svcMap  = { recipes:'Recipe Build', fullsetup:'Account Setup & Implementation', cleanup:'Account Cleanup Package (from $350)', ongoing:'Professional Services ($400/month)', training:'Training & Consultation ($100/hr)' };
+  const locMap  = { '1':'1 location', '2-3':'2–3 locations', '4+':'4+ locations' };
+  const catMap  = { yes:'fully set up', partial:'partially set up', no:'not set up yet' };
+  const tlMap   = { asap:'as soon as possible', month:'within the next month', exploring:'just exploring for now' };
+
+  const summary = [
+    '--- From Quote Estimator (Custom Quote) ---',
+    'Locations: ' + (locMap[ans.q1] || ans.q1),
+    'Platform: ' + (platMap[ans.q2] || ans.q2),
+    'Service needed: ' + (svcMap[ans.q3] || ans.q3),
+    'Recipe count: ' + (ans.q4 || '—'),
+    'Catalog status: ' + (catMap[ans.q5] || ans.q5),
+    'Timeline: ' + (tlMap[ans.q6] || ans.q6),
+    '---',
+    "What's your biggest challenge with your inventory system right now?"
+  ].join('\n');
+
+  const params = new URLSearchParams({
+    platform: platMap[ans.q2] || '',
+    service:  'Free Account Assessment',
+    message:  summary
+  });
+  return 'services.html?' + params.toString() + '#contact';
+}
+
+function showResult() {
+  if (!ans.q6) return;
+  document.getElementById('step-6').classList.remove('active');
+  document.getElementById('step-result').classList.add('active');
+  setProgress(7);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const locL  = { '1':'1 location', '2-3':'2–3 locations', '4+':'4+ locations' };
+  const platL = { marketman:'MarketMan', xtrachef:'xtraChef', none:'No platform yet', notsure:'Platform TBD' };
+  const svcL  = { recipes:'Recipe building', fullsetup:'Full setup', cleanup:'Cleanup', ongoing:'Ongoing management', training:'Training' };
+  const tlL   = { asap:'Ready to start ASAP', month:'Within the next month', exploring:'Just exploring' };
+
+  const pills = [locL[ans.q1], platL[ans.q2], svcL[ans.q3], tlL[ans.q6]].filter(Boolean);
+  const pillsHTML = pills.map(p => '<span class="s-pill">' + p + '</span>').join('');
+
+  const r = calc();
+
+  if (r.custom) {
+    document.getElementById('resultCard').innerHTML =
+      '<div class="result-header">' +
+        '<div class="result-eyebrow">📋 Your Estimate</div>' +
+        '<h2>Let\'s talk through the details</h2>' +
+        '<p>' + r.r + '</p>' +
+        '<div class="summary-pills">' + pillsHTML + '</div>' +
+      '</div>' +
+      '<div class="result-body">' +
+        '<div class="assessment-banner"><span class="b-icon">💬</span><p><strong>Custom quotes are usually same-day.</strong> Drop me a message with your setup details and I\'ll get back to you with a real number quickly.</p></div>' +
+        '<div class="cta-group">' +
+          '<a href="' + buildCustomFormURL(pills) + '" class="cta-primary">📋 Fill Out the Assessment Form</a>' +
+          '<a href="https://wa.me/639222031241?text=Hi Isaac! I filled out your quote form and need a custom quote. Setup: ' + pills.join(', ') + '." target="_blank" class="cta-wa">💬 Message on WhatsApp</a>' +
+          '<p class="cta-foot">Free assessment always included · <a href="services.html">See all services</a></p>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  const bdHTML = r.breakdown.map(b => '<li><span class="bd-label">' + b.l + '</span><span class="bd-price">' + b.p + '</span></li>').join('');
+  const incHTML = r.includes.map(i => '<li>' + i + '</li>').join('');
+  const priceDisp = r.type === 'Monthly Management'
+    ? '$150 – $400 <span style="font-size:1rem;color:var(--text-lt);font-weight:400">/month</span>'
+    : '$' + r.low.toLocaleString() + ' – $' + r.high.toLocaleString();
+  const urgency = ans.q6 === 'asap'
+    ? '<strong>Since you\'re ready to move quickly,</strong> I can usually start within a few days of your free assessment call.'
+    : ans.q6 === 'month'
+    ? '<strong>Good timing.</strong> When you\'re ready, the free 30-min assessment is the best first step — no obligation.'
+    : '<strong>Just exploring? No problem.</strong> The free assessment gives you a clear picture of what\'s involved, with zero pressure.';
+
+  document.getElementById('resultCard').innerHTML =
+    '<div class="result-header">' +
+      '<div class="result-eyebrow">📋 Your Estimate</div>' +
+      '<h2>Here\'s your price range</h2>' +
+      '<p>Based on your answers — a solid estimate for your ' + r.type.toLowerCase() + ' project.</p>' +
+      '<div class="summary-pills">' + pillsHTML + '</div>' +
+    '</div>' +
+    '<div class="result-body">' +
+      '<div class="price-range-block">' +
+        '<div class="price-icon">💰</div>' +
+        '<div>' +
+          '<div class="price-label">Ballpark Estimate</div>' +
+          '<div class="price-value">' + priceDisp + '</div>' +
+          '<div class="price-note">This is a starting range based on your answers. I will follow up with an actual proposal once we\'ve had a quick look at your account.</div>' +
+        '</div>' +
+      '</div>' +
+      '<ul class="breakdown">' + bdHTML + '</ul>' +
+      '<div class="included-title">What\'s Included</div>' +
+      '<ul class="included-list">' + incHTML + '</ul>' +
+      '<div class="assessment-banner"><span class="b-icon">🎯</span><p><strong>Free assessment always comes first.</strong> ' + urgency + '</p></div>' +
+      '<div class="cta-group">' +
+        '<a href="' + buildFormURL(r, pills) + '" class="cta-primary">📋 Fill Out the Assessment Form</a>' +
+        '<a href="https://wa.me/639222031241?text=Hi Isaac! I filled out your quote form — got $' + r.low + '–$' + r.high + ' for ' + r.type.toLowerCase() + '. I have ' + (locL[ans.q1]||'') + ' and would love to chat!" target="_blank" class="cta-wa">💬 Message Me on WhatsApp</a>' +
+        '<p class="cta-foot">No obligation · Free assessment · <a href="services.html">View full pricing</a></p>' +
+      '</div>' +
+    '</div>';
+}
+</script>
+</body>
+</html>
